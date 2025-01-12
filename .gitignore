@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Secrets
+credentials.json
+
+# VS Code
+.vscode/
+
+# OS Specific
+.DS_Store
+Thumbs.db
