@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Global Meeting Scheduler</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #120e46;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        main {
+            margin: 20px auto;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            border: 1px solid #ddd;
+        }
+
+        .chat-display {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-display .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .message.user {
+            background-color: #e1ffe1;
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            background-color: #e9e9ff;
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #0d1f50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #120d52;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>AI-Powered Global Meeting Scheduler</h1>
+</header>
+
+<main>
+    <div class="chat-container">
+        <div id="chat-display" class="chat-display">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="chat-input">
+            <input id="user-input" type="text" placeholder="Type a message..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+</main>
+
+<script>
+    const chatDisplay = document.getElementById('chat-display');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    // Handle user message
+    sendBtn.addEventListener('click', sendMessage);
+
+    function sendMessage() {
+        const userMessage = userInput.value.trim();
+        if (!userMessage) return;
+
+        // Add user message to chat
+        addMessage(userMessage, 'user');
+
+        // Simulate bot response
+        fetch('/webhook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                queryResult: {
+                    queryText: userMessage,
+                },
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botMessage = data.fulfillmentText || "Sorry, I didn't understand that.";
+            addMessage(botMessage, 'bot');
+        })
+        .catch(error => {
+            addMessage("Error: Unable to connect to server.", 'bot');
+        });
+
+        // Clear input field
+        userInput.value = '';
+    }
+
+    function addMessage(message, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('message', type);
+        msgDiv.textContent = message;
+        chatDisplay.appendChild(msgDiv);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight; // Scroll to bottom
+    }
+</script>
+
+</body>
+</html>

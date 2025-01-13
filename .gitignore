@@ -6,6 +6,8 @@ venv/
 
 # Secrets
 credentials.json
+.env
+token.json
 
 # VS Code
 .vscode/
@@ -13,3 +15,6 @@ credentials.json
 # OS Specific
 .DS_Store
 Thumbs.db
+
+#For Development files
+token_gen.py
