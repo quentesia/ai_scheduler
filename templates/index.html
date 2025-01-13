@@ -14,7 +14,7 @@
         }
 
         header {
-            background-color: #120e46;
+            background-color: #0d0c3a;
             color: white;
             text-align: center;
             padding: 1em 0;
@@ -81,7 +81,7 @@
         .chat-input button {
             margin-left: 10px;
             padding: 10px 20px;
-            background-color: #0d1f50;
+            background-color: #0d0c3a;
             color: white;
             border: none;
             border-radius: 5px;
@@ -89,7 +89,7 @@
         }
 
         .chat-input button:hover {
-            background-color: #120d52;
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -105,8 +105,8 @@
             <!-- Chat messages will appear here -->
         </div>
         <div class="chat-input">
-            <input id="user-input" type="text" placeholder="Type a message..." />
-            <button id="send-btn">Send</button>
+            <input id="user-input" type="text" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()" />
+            <button id="send-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 </main>
@@ -114,10 +114,6 @@
 <script>
     const chatDisplay = document.getElementById('chat-display');
     const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
-
-    // Handle user message
-    sendBtn.addEventListener('click', sendMessage);
 
     function sendMessage() {
         const userMessage = userInput.value.trim();

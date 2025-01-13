@@ -45,14 +45,14 @@ def calendar():
         return jsonify({"error": str(e)}), 401
 
 # Webhook route
-@app.route('/webhook', methods=['POST', 'GET'])
+@app.route('/webhook', methods=['POST'])
 def webhook():
-    if request.method == 'GET':
-        return jsonify({"message": "This endpoint is for POST requests from Dialogflow."})
-
     data = request.get_json()
     intent = data.get('queryResult', {}).get('intent', {}).get('displayName')
     parameters = data.get('queryResult', {}).get('parameters', {})
+
+    print(f"Data: {data}")
+    print(f"Intent: {intent}")
 
     if intent == 'CreateMeeting':
         return create_meeting(parameters)
