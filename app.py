@@ -5,11 +5,17 @@ from datetime import datetime, timedelta
 from auth import authorize, oauth2callback, get_authenticated_service
 from dotenv import load_dotenv
 import os
+import uuid
+import requests
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'fallback_secret_key')  # Fallback if .env is missing
+DIALOGFLOW_SESSION_ID = str(uuid.uuid4())
+DIALOGFLOW_PROJECT_ID = os.getenv('DIALOGFLOW_PROJECT_ID')
+DIALOGFLOW_API_URL = f"https://dialogflow.googleapis.com/v2beta1/projects/{DIALOGFLOW_PROJECT_ID}/agent/sessions/{DIALOGFLOW_SESSION_ID}:detectIntent"
+DIALOGFLOW_AUTH_TOKEN = os.getenv("DIALOGFLOW_AUTH_TOKEN")
 
 # Authenticate with Google Calendar API
 def get_google_calendar_service():
@@ -47,21 +53,41 @@ def calendar():
 # Webhook route
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    data = request.get_json()
-    intent = data.get('queryResult', {}).get('intent', {}).get('displayName')
-    parameters = data.get('queryResult', {}).get('parameters', {})
+    body = request.get_json()
+    headers = {
+        "Authorization": f"Bearer {DIALOGFLOW_AUTH_TOKEN}",
+        "Content-Type": "application/json"
+    }
 
-    print(f"Data: {data}")
-    print(f"Intent: {intent}")
+    try:
+        # Make the API call to Dialogflow
+        response = requests.post(DIALOGFLOW_API_URL, json=body, headers=headers)
+        response_data = response.json()
 
-    if intent == 'CreateMeeting':
-        return create_meeting(parameters)
-    elif intent == 'CancelMeeting':
-        return cancel_meeting(parameters)
-    elif intent == 'ShowUpcomingMeetings':
-        return show_upcoming_meetings()
-    else:
-        return jsonify({"fulfillmentText": "Sorry, I didn't understand that intent."})
+        intent = response_data.get('queryResult', {}).get('intent', {}).get('displayName', 'Unknown Intent')
+        parameters = response_data.get('queryResult', {}).get('parameters', {})
+
+        print(f"Data: {response_data}")
+        print(f"Intent: {intent}")
+        print(f"Parameters: {parameters}")
+
+        if intent == 'Default Welcome Intent':
+            return jsonify({"fulfillmentText": "Hello! How can I help you today?"})
+        elif intent == 'CreateMeeting':
+            return create_meeting(parameters)
+        elif intent == 'CancelMeeting':
+            return cancel_meeting(parameters)
+        elif intent == 'ShowUpcomingMeetings':
+            return show_upcoming_meetings()
+        else:
+            return jsonify({"fulfillmentText": "Sorry, I didn't understand that intent."})
+
+
+
+    except requests.exceptions.RequestException as e:
+        # Handle errors during the API request
+        print(f"Error making Dialogflow API call: {e}")
+        return jsonify({"fulfillmentText": "An error occurred while processing your request."}), 500
     
 # Fetch meetings for the next week
 def show_upcoming_meetings():

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered Global Meeting Scheduler</title>
+    <title>Bublaslot: Google Meeting Scheduler</title>
     <style>
         /* General Styles */
         body {
@@ -96,7 +96,7 @@
 <body>
 
 <header>
-    <h1>AI-Powered Global Meeting Scheduler</h1>
+    <h1>Bublaslot: Google Meeting Scheduler</h1>
 </header>
 
 <main>
@@ -127,19 +127,26 @@
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                queryResult: {
-                    queryText: userMessage,
-                },
+                "queryInput": {
+                    "text": {
+                        "text": userMessage,
+                        "languageCode": "en-US"
+                    }
+                }
             }),
         })
-        .then(response => response.json())
-        .then(data => {
-            const botMessage = data.fulfillmentText || "Sorry, I didn't understand that.";
-            addMessage(botMessage, 'bot');
-        })
-        .catch(error => {
-            addMessage("Error: Unable to connect to server.", 'bot');
-        });
+    .then(response => {
+        console.log(response);
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        const botMessage = data.fulfillmentText || "Sorry, I didn't understand that.";
+        addMessage(botMessage, 'bot');
+    })
+    .catch(error => {
+        addMessage("Error: Unable to connect to server.", 'bot');
+    });
 
         // Clear input field
         userInput.value = '';

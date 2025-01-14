@@ -6,6 +6,7 @@ venv/
 
 # Secrets
 credentials.json
+dialogflow.json
 .env
 token.json
 
