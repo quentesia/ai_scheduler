@@ -8,6 +8,12 @@ import os
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Allow HTTP for local testing
 client_secrets_file = 'credentials.json'
 
+# Authenticate with Google Calendar API
+def get_google_calendar_service():
+    creds = Credentials.from_authorized_user_file('token.json', ['https://www.googleapis.com/auth/calendar'])
+    service = build('calendar', 'v3', credentials=creds)
+    return service
+
 def get_google_auth_flow():
     """Create and return the Google OAuth2 flow."""
     return Flow.from_client_secrets_file(
