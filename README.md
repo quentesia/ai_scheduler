@@ -40,7 +40,3 @@ Contributions are welcome! Fork the branch and submit a pull request for approva
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
-
-## Contact
-
-For any questions or feedback, please contact us at support@aischeduler.com.
